@@ -15,9 +15,9 @@ int VFD_cs = 8;
 #define __VFD_H__
 #include <stdio.h>
 /*---------------------------------------------------------------------------*/
-#define VFD_clk           (7)  /* serial clock for both M66004 and '165 */
-#define VFD_data           (9)  /* serial data to M66004 */
-#define VFD_cs            (8)  /* chip select M66004 */
+#define VFD_clk           (7)  /* clock */
+#define VFD_data           (9)  /* data */
+#define VFD_cs            (8)  /* chip select */
 /*---------------------------------------------------------------------------*/
 #endif
 /***************************************************************/
@@ -35,8 +35,8 @@ void vfd_init(void){
   send_byte(0x00 | 0x04);  //13 grids, I define it. Initial used the & instead of |, but not working to the test
   // of the port 0 and port 1, with pipe work ok. Check it in time.
   delay(4);
-  /* Enable auto increment (should never be turned off) */
-  send_byte(0xF4 | 0x01); // active autoincrement
+  /* Enable auto increment */
+  send_byte(0xF0 | 0x05); // active autoincrement, deactivate is (0xF0 | 0x04)
   delay(4);
   /* Set dimmer value + freq (128/fOSC) */
   send_byte(0x08 | 0x07);  // dimmer maxi
@@ -114,7 +114,7 @@ static void send_arrayVector(uint8_t *bv, uint8_t len)
       digitalWrite(VFD_clk, HIGH);
       bit = bit >> 1;             /* shift so we check the next one in order */
     }
-    /* small delay here, tBUSY = 6 cycles at 500 kHz =~ 14 µs == 14 cycles at 1 MHz. */
+    /* small delay here, tBUSY = 6 cycles at 500 kHz =~ 14 Âµs == 14 cycles at 1 MHz. */
   }
   // end condition
   digitalWrite(VFD_cs, HIGH);
@@ -398,7 +398,7 @@ void show_pixel(){
   delayMicroseconds(5);
 send_byte(0xF0 | 0x04); // Set to autoincrement
 delayMicroseconds(10);
-// I only see 14 symbols, but the grid have 24. All position 0 of tabel of symbol are empty, also the 5º of first byte.
+// I only see 14 symbols, but the grid have 24. All position 0 of tabel of symbol are empty, also the 5Âº of first byte.
     for( RAM=0; RAM < 16; RAM++){
           digitalWrite(VFD_cs, LOW);
           delayMicroseconds(10);
@@ -436,7 +436,7 @@ void show(){
     delay(500);
 send_byte(0xF0 | 0x05); // Set to autoincrement
 delayMicroseconds(10);
-// I only see 14 symbols, but the grid have 24. All position 0 of tabel of symbol are empty, also the 5º of first byte.
+// I only see 14 symbols, but the grid have 24. All position 0 of tabel of symbol are empty, also the 5Âº of first byte.
     for( RAM=0; RAM < 16; RAM++){
           digitalWrite(VFD_cs, LOW);
           delayMicroseconds(10);
